@@ -14,6 +14,9 @@ interface Request {
 
 /**
  * Dependency Inversion - SOLID (Receber as instancias por parâmetro do constructor)
+ * SOLID
+ * - Single Responsabiliry Principle (Dividir as responsabilidares)
+ * - Dependency Inversion Principle ( Buscar dados de um único repositorio)
  */
 
 class CreateAppointimentService {
