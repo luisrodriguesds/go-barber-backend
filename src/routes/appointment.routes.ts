@@ -25,7 +25,6 @@ appointmentRoute.post('/', async (request, response) => {
       provider_id,
       date: parseDate,
     });
-    console.log(appointment);
     return response.json(appointment);
   } catch (error) {
     return response.status(400).json({ error: error.message });
