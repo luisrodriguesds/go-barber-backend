@@ -1,38 +1,19 @@
-import { isEqual } from 'date-fns';
+import { EntityRepository, Repository } from 'typeorm';
 import Appointment from '../models/Appointment';
 
-// DTO - Data Transfere Object
-// Enviar obj por parâmetro fica bem melhor
+@EntityRepository(Appointment)
+class AppointmentRepository extends Repository<Appointment> {
+  public async findByDate(date: Date): Promise<Appointment | null> {
+    // const findAppointment = this.appointments.find(appointment =>
+    //   isEqual(date, appointment.date),
+    // );
 
-interface AppointmentCreateDTO {
-  provider: string;
-  date: Date;
-}
-
-class AppointmentRepository {
-  private appointments: Appointment[];
-
-  constructor() {
-    this.appointments = [];
-  }
-
-  public all(): Appointment[] {
-    return this.appointments;
-  }
-
-  public findByDate(date: Date): Appointment | null {
-    const findAppointment = this.appointments.find(appointment =>
-      isEqual(date, appointment.date),
-    );
+    // Como estou extendendo essa class a class repository, consigo acessar esses métodos
+    const findAppointment = await this.findOne({
+      where: { date },
+    });
 
     return findAppointment || null;
-  }
-
-  public create({ provider, date }: AppointmentCreateDTO): Appointment {
-    const appointment = new Appointment({ provider, date });
-    this.appointments.push(appointment);
-
-    return appointment;
   }
 }
 

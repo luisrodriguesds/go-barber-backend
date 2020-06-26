@@ -5,7 +5,7 @@ export default class CreateAppointments1593034544468
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'appointiments',
+        name: 'appointments',
         columns: [
           {
             name: 'id',

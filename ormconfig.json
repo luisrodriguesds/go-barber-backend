@@ -5,6 +5,7 @@
   "username": "root",
   "password": "",
   "database": "gobarbe",
+  "entities": ["./src/models/*.ts"],
   "migrations": ["./src/database/migrations/*.ts"],
   "cli": {
     "migrationsDir": "./src/database/migrations"
