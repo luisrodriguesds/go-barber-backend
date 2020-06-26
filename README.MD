@@ -8,9 +8,9 @@ Aplicação responsável por marcar agendamentos de visita ao barbairo
 
 ## Techs
 
-[] Typescript
-[] TypeORM
-[] Design Pattern
+- Typescript
+- TypeORM
+- Design Pattern
 
 ## How To Use
 
