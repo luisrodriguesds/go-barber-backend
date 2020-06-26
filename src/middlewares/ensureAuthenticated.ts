@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 import authConfig from '../config/auth';
+import AppError from '../errors/AppError';
 
 interface TokenPayLoad {
   iat: number;
@@ -28,6 +29,6 @@ export default function ensureAuthenticated(
     };
     return next();
   } catch (error) {
-    throw Error('JWT é inválido');
+    throw new AppError('JWT é inválido', 401);
   }
 }
