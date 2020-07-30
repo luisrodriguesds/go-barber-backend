@@ -14,13 +14,13 @@ interface Request {
 @injectable()
 class ResetPasswordService {
   constructor(
-    @inject('usersRepository')
+    @inject('UsersRepository')
     private usersRepository: IUserRepository,
 
-    @inject('UsersTokenRepository')
+    @inject('UserTokensRepository')
     private usersTokenRepository: IUserTokenRepository,
 
-    @inject('UsersTokenRepository')
+    @inject('HashProvider')
     private hashProvider: IHashProvider,
   ) {}
 

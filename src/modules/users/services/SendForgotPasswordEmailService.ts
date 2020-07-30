@@ -13,13 +13,13 @@ interface Request {
 @injectable()
 class SendForgotPasswordEmailService {
   constructor(
-    @inject('usersRepository')
+    @inject('UsersRepository')
     private usersRepository: IUserRepository,
 
     @inject('MailProvider')
     private mailProvider: IMailProvider,
 
-    @inject('UsersTokenRepository')
+    @inject('UserTokensRepository')
     private usersTokenRepository: IUserTokenRepository,
   ) {}
 
@@ -29,9 +29,22 @@ class SendForgotPasswordEmailService {
       throw new AppError('Usuário não existe');
     }
 
-    await this.usersTokenRepository.generate(user.id);
+    const { token } = await this.usersTokenRepository.generate(user.id);
 
-    this.mailProvider.sendMail(email, 'Pedido de recuperação!');
+    await this.mailProvider.sendMail({
+      to: {
+        name: user.name,
+        email: user.email,
+      },
+      subject: '[Gobarber] Recuperação de senha',
+      templateData: {
+        template: 'Olá, {{name}}! Segue seu token: {{token}}',
+        variables: {
+          name: user.name,
+          token,
+        },
+      },
+    });
   }
 }
 
