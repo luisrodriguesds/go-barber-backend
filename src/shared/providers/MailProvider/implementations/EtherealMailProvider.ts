@@ -4,7 +4,7 @@ import { injectable, inject } from 'tsyringe';
 import IMailProvider from '../models/IMailProvider';
 import ISendMailDTO from '../dtos/ISendMailDTO';
 
-injectable();
+@injectable()
 class EtherealMailProvider implements IMailProvider {
   private client: Transporter;
 
@@ -12,14 +12,14 @@ class EtherealMailProvider implements IMailProvider {
     @inject('MailTemplateProvider')
     private mailTemplateProvider: IMailTemplateProvider,
   ) {
-    nodemailer.createTestAccount().then(_ => {
+    nodemailer.createTestAccount().then(account => {
       const transporter = nodemailer.createTransport({
-        host: 'smtp.mailtrap.io',
-        port: 2525,
-        secure: false,
+        host: account.smtp.host,
+        port: account.smtp.port,
+        secure: account.smtp.secure,
         auth: {
-          user: 'e36d10705929c0',
-          pass: '0ea1b7025d6f29',
+          user: account.user,
+          pass: account.pass,
         },
       });
       this.client = transporter;
@@ -32,7 +32,7 @@ class EtherealMailProvider implements IMailProvider {
     from,
     templateData,
   }: ISendMailDTO): Promise<void> {
-    await this.client.sendMail({
+    const message = await this.client.sendMail({
       from: {
         name: from?.name || 'Equipe Gobarber',
         address: from?.email || 'sac@gobarber.com',
@@ -44,6 +44,8 @@ class EtherealMailProvider implements IMailProvider {
       subject,
       html: await this.mailTemplateProvider.parse(templateData),
     });
+    console.log('Message sent: %s', message.messageId);
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(message));
   }
 }
 
