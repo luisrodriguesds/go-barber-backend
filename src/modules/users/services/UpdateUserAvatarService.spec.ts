@@ -5,15 +5,21 @@ import FakeUserRepository from '../repositories/fakes/FakeUserRepository';
 
 import UpdateUserAvatarService from './UpdateUserAvatarService';
 
+let fakeUserRepository: FakeUserRepository;
+let fakeStorageProvider: FakeStorageProvider;
+let updateUserAvatar: UpdateUserAvatarService;
+
 describe('CreateUser', () => {
-  it('should be able to update the avatar of user', async () => {
-    const fakeUserRepository = new FakeUserRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-    const updateUserAvatar = new UpdateUserAvatarService(
+  beforeEach(() => {
+    fakeUserRepository = new FakeUserRepository();
+    fakeStorageProvider = new FakeStorageProvider();
+    updateUserAvatar = new UpdateUserAvatarService(
       fakeUserRepository,
       fakeStorageProvider,
     );
+  });
 
+  it('should be able to update the avatar of user', async () => {
     const user = await fakeUserRepository.create({
       name: 'John Doe',
       email: 'john@doe.com',
@@ -29,14 +35,7 @@ describe('CreateUser', () => {
   });
 
   it('should not be able to update the avatar of user that not exists', async () => {
-    const fakeUserRepository = new FakeUserRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-    const updateUserAvatar = new UpdateUserAvatarService(
-      fakeUserRepository,
-      fakeStorageProvider,
-    );
-
-    expect(
+    await expect(
       updateUserAvatar.execute({
         avatarFilename: 'avatar.jpg',
         user_id: 'non-exist',
@@ -45,16 +44,7 @@ describe('CreateUser', () => {
   });
 
   it('should be able to delete avatar that already exists and update', async () => {
-    const fakeUserRepository = new FakeUserRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
-
-    const updateUserAvatar = new UpdateUserAvatarService(
-      fakeUserRepository,
-      fakeStorageProvider,
-    );
-
     const user = await fakeUserRepository.create({
       name: 'John Doe',
       email: 'john@doe.com',
