@@ -1,6 +1,8 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Raw } from 'typeorm';
 import IAppointment from '@modules/appointments/repositories/IAppointimentsRepository';
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO';
+import IFindAllInMothFromProviderDTO from '@modules/appointments/dtos/IFindAllInMothFromProviderDTO';
+import IFindAllInDayFromProviderDTO from '@modules/appointments/dtos/IFindAllInDayFromProviderDTO';
 import Appointment from '../entities/Appointment';
 
 class AppointmentRepository implements IAppointment {
@@ -23,11 +25,58 @@ class AppointmentRepository implements IAppointment {
     return findAppointment;
   }
 
+  public async findAllInMothFromProvider({
+    provider_id,
+    month,
+    year,
+  }: IFindAllInMothFromProviderDTO): Promise<Appointment[]> {
+    const parseMonth = String(month).padStart(2, '0');
+    const appointments = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(
+          dateFieldName =>
+            `date_format(${dateFieldName}, '%m-%Y') = '${parseMonth}-${year}'`,
+        ),
+      },
+    });
+    // `to_char(${dateFieldName}, 'MM-YYY') = '${parseMonth}-${year}'`, no pg
+
+    return appointments;
+  }
+
+  public async findAllInDayFromProvider({
+    provider_id,
+    day,
+    month,
+    year,
+  }: IFindAllInDayFromProviderDTO): Promise<Appointment[]> {
+    const parseDay = String(day).padStart(2, '0');
+    const parseMonth = String(month).padStart(2, '0');
+    const appointments = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(
+          dateFieldName =>
+            `date_format(${dateFieldName}, '%d-%m-%Y') = '${parseDay}-${parseMonth}-${year}'`,
+        ),
+      },
+    });
+    // `to_char(${dateFieldName}, 'MM-YYY') = '${parseMonth}-${year}'`, no pg
+
+    return appointments;
+  }
+
   public async create({
     provider_id,
+    user_id,
     date,
   }: ICreateAppointmentDTO): Promise<Appointment> {
-    const appontment = this.ormRepository.create({ provider_id, date });
+    const appontment = this.ormRepository.create({
+      provider_id,
+      date,
+      user_id,
+    });
     await this.ormRepository.save(appontment);
 
     return appontment;
