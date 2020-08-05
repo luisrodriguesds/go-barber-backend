@@ -7,6 +7,7 @@ import { celebrate, Segments, Joi } from 'celebrate';
 
 import uploadConfig from '@config/upload';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
+import { classToClass } from 'class-transformer';
 
 const userRoute = Router();
 const upload = multer(uploadConfig);
@@ -27,7 +28,7 @@ userRoute.post(
       email,
       password,
     });
-    return response.json(user);
+    return response.json(classToClass(user));
   },
 );
 
@@ -41,7 +42,7 @@ userRoute.patch(
       user_id: request.user.id,
       avatarFilename: request.file.filename,
     });
-    return response.json(user);
+    return response.json(classToClass(user));
   },
 );
 

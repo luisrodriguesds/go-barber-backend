@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 
 import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
 import { celebrate, Segments, Joi } from 'celebrate';
+import { classToClass } from 'class-transformer';
 
 const sessionRoute = Router();
 
@@ -22,8 +23,7 @@ sessionRoute.post(
       email,
       password,
     });
-    delete user.password;
-    return response.json({ user, token });
+    return response.json({ user: classToClass(user), token });
   },
 );
 
